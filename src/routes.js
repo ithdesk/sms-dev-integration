@@ -9,10 +9,11 @@ const SMSController = require('./controllers/SMSController');
 routes.get('/sms', SMSController.index);
 routes.post('/sms', SMSController.create);
 routes.post('/sms/response', SMSController.response);
+routes.post('/sms/situation', SMSController.situation);
 
 routes.post('/database/sync', async (req, res) => {
   console.log(models);
-  await connection.sync({ force: true });
+  await connection.sync({ alter: true });
   return res.sendStatus(200);
 });
 

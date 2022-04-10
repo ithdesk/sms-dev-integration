@@ -18,12 +18,8 @@ const SMSSent = connection.define('sms_sent', {
   smsDevId: {
     type: Sequelize.STRING,
     allowNull: false,
-  },
-  description: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },   
-  situation: {
+  }, 
+  status: {
     type: Sequelize.STRING,
     allowNull: false,
   },   

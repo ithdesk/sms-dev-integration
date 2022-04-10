@@ -12,7 +12,9 @@ const axios = require('axios');
 module.exports = {
   async index(req, res) {
     try {
-      const messages = await SMSSent.findAll();
+      const messages = await SMSSent.findAll({
+        include: [SMSResponse]
+      });
       return res.status(200).json(messages);
     } catch (err) {
       return res.status(400).json(err);
@@ -36,8 +38,7 @@ module.exports = {
         receiverNumber,
         message,
         smsDevId: data.id,
-        situation: data.situacao,
-        description: data.descricao,
+        status: data.descricao,
         errorCode: data.codigo
       }, {
         transaction,
@@ -53,6 +54,24 @@ module.exports = {
   async response(req, res) {
     try {
       return res.status(200).send("ROTA DE CALLBACK DE SMS")
+    } catch (err) {
+      return res.status(400).json(err);
+    }
+  },
+  async situation(req, res) {
+    try {
+      const { id, situacao, } = req.body;
+      const sms = await SMSSent.findOne({
+        where: {
+          smsDevId: id,
+        }
+      });
+
+      if (!sms) return res.status(400).json({ message: 'SMS not found'});
+
+      sms.status = situacao;
+      await sms.save();
+      return res.sendStatus(200);
     } catch (err) {
       return res.status(400).json(err);
     }
