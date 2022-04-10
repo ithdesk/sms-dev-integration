@@ -53,7 +53,23 @@ module.exports = {
   },
   async response(req, res) {
     try {
-      return res.status(200).send("ROTA DE CALLBACK DE SMS")
+      const { id, id_sent, message } = req.body;
+
+      const sms = await SMSSent.findOne({
+        where: {
+          smsDevId: id_sent,
+        }
+      });
+
+      if (!sms) return res.status(400).json({ message: 'SMS not found'});
+
+      const response = await SMSResponse.create({
+        message,
+        smsDevResponseId: id,
+        smsSentId: sms.dataValues.id
+      });
+
+      return res.status(200).json(response);
     } catch (err) {
       return res.status(400).json(err);
     }
